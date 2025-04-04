@@ -1,0 +1,14 @@
+<% if authenticated? %>
+  <div class="flex flex-col">
+    <p>Hi <%= Current.user.email_address%>! </p>
+    <p>Join a Race!</p>
+    <%= turbo_stream_from "races" %>
+    <div id="races">
+      <%= render @races %>
+    </div>
+    <p>Or create a race and invite your friends! </p>
+    <%= button_to "Create Race", races_path, class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+<% else %>
+  <%= link_to "Login to get racing!", new_session_path %>
+<% end %>

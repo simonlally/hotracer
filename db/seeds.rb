@@ -7,3 +7,23 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+
+users = [
+  {
+    email_address: "test@example.com",
+    password: "test123"
+  },
+  {
+    email_address: "test2@example.com",
+    password: "test123"
+  }
+]
+
+users.each do |user|
+  User.find_or_create_by!(email_address: user[:email_address]) do |u|
+    u.password = user[:password]
+    u.password_confirmation = user[:password]
+  end
+  puts "Created user: #{user[:email_address]}"
+end
