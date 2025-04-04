@@ -29,7 +29,7 @@ class Participation < ApplicationRecord
 
   after_create_commit -> {
     broadcast_append_to(
-      [ race, "participations" ],
+      race,
       target: "participations",
       partial: "participations/participation",
       locals: { participation: self }

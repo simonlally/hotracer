@@ -28,6 +28,25 @@ class RacesController < ApplicationController
     end
   end
 
+  def start
+    @race = Race.find(params[:id]) || Race.find_by(slug: params[:slug])
+
+    return unless params[:action] == "start"
+
+    Turbo::StreamsChannel.broadcast_update_to(
+      @race,
+      target: "countdown",
+      html: "<div class='countdown-container text-center'>
+              <p class='text-lg mb-2'>Race starting soon!</p>
+              <div class='countdown-value text-5xl font-bold text-yellow-500'>Get Ready!</div>
+             </div>"
+    )
+
+    CountdownJob.perform_later(race_id: @race.id)
+
+    head :ok
+  end
+
   def update
   end
 end

@@ -18,10 +18,10 @@ class Race < ApplicationRecord
   has_many :participations, dependent: :destroy
   has_many :users, through: :participations
 
-  validates :slug, presence: true, uniqueness: true
-  validates :status, presence: true
+  VALID_STATUSES = %w[pending countdown in_progress finished].freeze
 
-  # enum status: { pending: "pending", countdown: "countdown", in_progress: "in_progress" }
+  validates :slug, presence: true, uniqueness: true
+  validates :status, presence: true, inclusion: { in: VALID_STATUSES }
 
   scope :joinable, -> { where(status: :pending) }
   scope :in_progress, -> { where(status: :in_progress) }

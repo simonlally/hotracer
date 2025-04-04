@@ -4,7 +4,12 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
-  resources :races, only: [ :index, :new, :create, :show, :update ]
+  resources :races, only: [ :index, :new, :create, :show, :update ] do
+    member do
+      get :start
+    end
+  end
+
   resources :participations
   root "races#index"
 end

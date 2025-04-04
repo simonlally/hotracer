@@ -1,14 +1,23 @@
 <div>
-  <h1>Welcome to Race <%= @race.slug %></h1>
-  <p>Hosted by: <%= @race.host.email_address %> </p>
-  <h2>Racers in lobby</h2>
-  <%= turbo_stream_from @race, "participations" %>
-  <div id="participations">
-    <% @participations.each do |participation| %>
-      <%= render partial: "participations/participation", locals: { participation: participation } %>
-    <% end %>
-  </div>
-  <% if @race.can_be_started?(Current.user) %>
-    <%= button_to "Start", race_path(@race, status: :start) %>
-  <% end %>
+  <% if authenticated? %>
+    <div id="<%= dom_id(@race)%>">
+      <h1>Welcome to Race <%= @race.slug %></h1>
+      <p>Hosted by: <%= @race.host.email_address %> </p>
+      <h2>Racers in lobby</h2>
+      <%= turbo_stream_from @race %>
+      <div id="participations">
+        <% @participations.each do |participation| %>
+          <%= render partial: "participations/participation", locals: { participation: participation } %>
+        <% end %>
+      </div>
+      <% if @race.can_be_started?(Current.user) %>
+        <%= button_to "Start", 
+            start_race_path(race_id: @race.id, status: :start),
+            method: :get,
+            data: { turbo: true } %>
+      <% end %>
+    </div>
+    <div id="countdown">
+    </div>
+  <% end %> <%# authenticated end %>
 </div>
