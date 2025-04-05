@@ -4,11 +4,11 @@ class CreateRaces < ActiveRecord::Migration[8.0]
       t.string :slug, null: false
       t.string :status, null: false, default: "pending"
       t.text :body, null: false
-      t.integer :duration_in_seconds
-      t.datetime :started_at
-      t.integer :host_id, null: false
+      t.references :host, null: false, foreign_key: { to_table: :users }
+      t.references :winner, null: true, foreign_key: { to_table: :users }
 
       t.timestamps
     end
+    add_index :races, :slug, unique: true
   end
 end

@@ -3,9 +3,8 @@
 # Table name: participations
 #
 #  id               :integer          not null, primary key
-#  accuracy         :integer
 #  finished_at      :datetime
-#  placed           :integer
+#  placement        :integer
 #  started_at       :datetime
 #  words_per_minute :integer
 #  created_at       :datetime         not null
