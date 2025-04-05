@@ -13,11 +13,16 @@
       <% if @race.can_be_started?(Current.user) %>
         <%= button_to "Start", 
             start_race_path(race_id: @race.id, status: :start),
+            id: "start-race-button",
             method: :get,
             data: { turbo: true } %>
       <% end %>
     </div>
     <div id="countdown">
+    </div>
+    <div id="in-progress" style="display: none;">
+      <h2>The race has begun!</h2>
+      <%# <p id="in-progress-timer">00:00</p> %>
     </div>
   <% end %> <%# authenticated end %>
 </div>
