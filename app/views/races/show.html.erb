@@ -1,4 +1,4 @@
-<div>
+<div data-controller="race">
   <% if authenticated? %>
     <div id="<%= dom_id(@race)%>">
       <h1>Welcome to Race <%= @race.slug %></h1>
@@ -15,10 +15,34 @@
               start_race_path(race_id: @race.id, status: :start),
               id: "start-race-button",
               method: :get,
-              data: { turbo: true, controller: "race", "race-target": "startButton", action: "click->race#hideStartButton" } %>
+              data: { turbo: true, "race-target": "startButton", action: "click->race#hideStartButton" } %>
       <% end %>
     </div>
     <div id="countdown">
+    </div>
+    <div id="meat-and-potatoes">
+      <div id="race-body" class="mb-5 p-4 bg-gray-100 rounded text-lg">
+        <%= @race.body %>
+      </div>
+      <div id="typing-area" class="mb-5">
+        <textarea id="race-input" 
+                  class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  rows="5"
+                  placeholder="Start typing here when the race begins..."
+                  disabled="<%= @race.status != 'started' %>"
+                  data-race-target="input"
+                  data-action="input->typing#checkProgress"
+                  data-typing-body-value="<%= @race.body %>"></textarea>
+      </div>
+      <div id="progress-indicators" class="mb-5">
+        <div class="flex items-center mb-2">
+          <span class="mr-2">Your progress:</span>
+          <div class="w-full bg-gray-200 rounded-full h-2.5">
+            <div id="user-progress" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+          </div>
+          <span id="user-percentage" class="ml-2">0%</span>
+        </div>
+      </div>
     </div>
   <% end %> <%# authenticated end %>
 </div>

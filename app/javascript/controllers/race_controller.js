@@ -1,30 +1,32 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["countdown", "startButton"];
+  static targets = ["startButton", "input"];
 
   connect() {
-    console.log("connected");
-    this.start();
+    console.log("race_controller connected");
+
+    document.addEventListener("countdown:finished", (event) => {
+      // console.log("Countdown finished event received");
+
+      // console.log("countdown finished event details:", event.detail);
+      const raceId = event.detail.raceId;
+      // console.log("race_id:", raceId);
+
+      this.enableTyping();
+    });
   }
 
-  start() {
-    let currentValue = 3;
-    this.countdownTarget.textContent = currentValue;
+  disconnect() {
+    document.removeEventListener("countdown:finished", this.boundEnableTyping);
+  }
 
-    const interval = setInterval(() => {
-      currentValue -= 1;
-      if (currentValue > 0) {
-        this.countdownTarget.textContent = currentValue;
-      } else {
-        this.countdownTarget.textContent = "GO!";
-        clearInterval(interval);
+  enableTyping() {
+    console.log("enableTyping called");
+    console.log("input target:", this.inputTarget);
 
-        setTimeout(() => {
-          this.countdownTarget.style.display = "none";
-        }, 1000);
-      }
-    }, 1000);
+    this.inputTarget.disabled = false;
+    this.inputTarget.focus();
   }
 
   hideStartButton() {
