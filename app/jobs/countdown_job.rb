@@ -9,7 +9,8 @@ class CountdownJob < ApplicationJob
       Turbo::StreamsChannel.broadcast_update_to(
         race,
         target: "countdown",
-        partial: "races/countdown"
+        partial: "races/countdown",
+        locals: { race: race }
       )
     end
   end

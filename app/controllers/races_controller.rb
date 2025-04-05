@@ -1,11 +1,12 @@
 class RacesController < ApplicationController
   skip_before_action :require_authentication, only: [ :index ]
+  before_action :set_race, only: [ :show, :start, :update ]
+
   def index
     @races = Race.joinable.includes(participations: :user)
   end
 
   def show
-    @race = Race.find(params[:id]) || Race.find_by(slug: params[:slug])
     @participations = @race.participations.includes(:user)
   end
 
@@ -29,24 +30,19 @@ class RacesController < ApplicationController
   end
 
   def start
-    @race = Race.find(params[:id]) || Race.find_by(slug: params[:slug])
-
     return unless params[:action] == "start"
-
-    Turbo::StreamsChannel.broadcast_update_to(
-      @race,
-      target: "countdown",
-      html: "<div class='countdown-container text-center'>
-              <p class='text-lg mb-2'>Race starting soon!</p>
-              <div class='countdown-value text-5xl font-bold text-yellow-500'>Get Ready!</div>
-             </div>"
-    )
+    return unless @race.status == "pending"
 
     CountdownJob.perform_later(race_id: @race.id)
-
     head :ok
   end
 
   def update
+  end
+
+  private
+
+  def set_race
+    @race ||= Race.find(params[:id]) || Race.find_by(slug: params[:slug])
   end
 end
