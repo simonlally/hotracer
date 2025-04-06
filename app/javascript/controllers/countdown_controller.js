@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = ["body"];
 
   connect() {
+    console.log("Countdown started");
     this.startCountdown();
   }
 

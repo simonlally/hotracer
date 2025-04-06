@@ -1,14 +1,26 @@
-<% if authenticated? %>
-  <div class="flex flex-col">
-    <p>Hi <%= Current.user.email_address%>! </p>
-    <p>Join a Race!</p>
-    <%= turbo_stream_from "races" %>
-    <div id="races">
-      <%= render @races %>
+<div class="w-full flex justify-center">
+  <% if authenticated? %>
+    <div class="flex flex-col">
+      <div class="text-center mb-4">
+        <h1 class="text-4xl font-bold text-gray-800">Welcome to HotRacer!</h1>
+        <p class="text-lg text-gray-600">
+          Hi <span class="text-indigo-600 font-semibold"><%= Current.user.email_address %></span>!
+        </p>
+      </div>
+      <%= turbo_stream_from "races" %>
+      <div id="races" class="mb-4 text-center">
+        <% if @races.any? %>
+          <%= render @races %>
+        <% else %>
+          <p class="text-indigo-600 font-semibold">No races are currently available to join. Create one and get racing!</p>
+        <% end %>
+      </div>
+      <div class="flex flex-col text-center mb-4">
+        <p class="text-indigo-600 font-semibold mb-4">Host your own race and invite your friends! </p>
+        <%= button_to "Create Race", races_path, class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer" %>
+      </div>
     </div>
-    <p>Or create a race and invite your friends! </p>
-    <%= button_to "Create Race", races_path, class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
-  </div>
-<% else %>
-  <%= link_to "Login to get racing!", new_session_path %>
-<% end %>
+  <% else %>
+    <%= link_to "Login to get racing!", new_session_path %>
+  <% end %>
+</div>
