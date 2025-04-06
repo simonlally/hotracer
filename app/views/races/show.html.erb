@@ -1,4 +1,4 @@
-<div data-controller="race" data-race-id="<%= @race.id %>">
+<div data-controller="race" data-race-id="<%= @race.id %>" data-race-body="<%= @race.body %>">
   <% if authenticated? %>
     <%= turbo_stream_from @race %>
     <div id="<%= dom_id(@race)%>" >
@@ -30,7 +30,7 @@
       <div id="wpm" class="my-16">
       </div>
       <div id="race-body" data-race-target="body" class="mb-5 p-4 bg-gray-100 rounded text-lg">
-        <%= @race.body %>
+        <%= @race.formatted_paragraph_body.html_safe %>
       </div>
       <div id="typing-area" class="mb-5">
         <textarea id="race-input"
@@ -53,5 +53,5 @@
     <div data-race-target="completionMessage" class="hidden mt-4 p-4 bg-green-100 text-green-800 rounded">
       <p class="font-bold">You won!</p>
     </div>
-  <% end %> <%# authenticated end %>
+  <% end %>
 </div>

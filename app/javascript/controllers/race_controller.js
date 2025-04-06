@@ -1,38 +1,26 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["startButton", "input", "body", "completionMessage"];
-
-  startTime = "";
-  endtime = "";
+  static targets = [
+    "startButton",
+    "input",
+    "body",
+    "completionMessage",
+    "formattedChar",
+  ];
 
   connect() {
-    this.formatRaceText();
+    this.unformattedRaceBody = this.element.dataset.raceBody;
 
-    document.addEventListener("countdown:finished", (event) => {
+    document.addEventListener("countdown:finished", () => {
       this.enableTyping();
     });
   }
 
   disconnect() {
-    document.removeEventListener("countdown:finished", this.boundEnableTyping);
-  }
-
-  formatRaceText() {
-    const originalText = this.bodyTarget.textContent.trim();
-    this.originalText = originalText;
-
-    const formattedHtml = originalText
-      .split("")
-      .map((char) => {
-        const displayChar = char === " " ? "&nbsp;" : char;
-        return `<span class="race-char">${displayChar}</span>`;
-      })
-      .join("");
-
-    this.bodyTarget.innerHTML = formattedHtml;
-
-    this.charElements = this.bodyTarget.querySelectorAll(".race-char");
+    document.removeEventListener("countdown:finished", () => {
+      this.enableTyping();
+    });
   }
 
   enableTyping() {
@@ -48,9 +36,8 @@ export default class extends Controller {
   handleInput(event) {
     const inputValue = event.target.value;
 
-    // each input we literally have to check the whole text
-
-    this.charElements.forEach((el) => {
+    // start from a clean slate for each keystroke
+    this.formattedCharTargets.forEach((el) => {
       el.classList.remove(
         "text-green-600",
         "text-red-600",
@@ -59,23 +46,34 @@ export default class extends Controller {
       );
     });
 
-    for (let i = 0; i < this.charElements.length; i++) {
-      if (i >= inputValue.length) return; // there is no input
+    /* 
+      loop through the entire input, for each character in the input
+      - if the character is correct, add the green class
+      - if the character is incorrect, add the red class
+      - if the character is the same as the input, add the underline class
+      - if the character is not in the input, do nothing
+    */
+    for (let i = 0; i < this.formattedCharTargets.length; i++) {
+      // there is no input so nothing needs to be done
+      if (i >= inputValue.length) return;
 
-      if (inputValue[i] === this.originalText[i]) {
-        this.charElements[i].classList.add("text-green-600");
+      if (inputValue[i] === this.unformattedRaceBody[i]) {
+        this.formattedCharTargets[i].classList.add("text-green-600");
       } else {
-        this.charElements[i].classList.add("text-red-600", "bg-red-200");
+        this.formattedCharTargets[i].classList.add(
+          "text-red-600",
+          "bg-red-200"
+        );
       }
 
-      // keep track of the cursor position
+      // character is the same as last character so this is our current position
       if (i === inputValue.length) {
-        this.charElements[i].classList.add("underline");
+        this.formattedCharTargets[i].classList.add("underline");
       }
     }
 
     // somebody won!
-    if (inputValue === this.originalText) {
+    if (inputValue === this.unformattedRaceBody) {
       this.endtime = new Date();
 
       this.inputTarget.disabled = true;
@@ -96,8 +94,8 @@ export default class extends Controller {
           completed: true,
         }),
       })
-        .then((response) => console.log(response))
-        .then((data) => {})
+        .then((response) => response.json())
+        .then((data) => console.log({ data }))
         .catch((error) => {
           console.error("Error:", error);
         });

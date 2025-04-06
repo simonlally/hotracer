@@ -38,8 +38,9 @@ class Race < ApplicationRecord
   scope :in_progress, -> { where(status: :in_progress) }
   scope :finished, -> { where(status: :finished) }
 
+  # turbo infers the model partial _race.html.erb
+  # and passes the current instance as the local variable
   after_create_commit { broadcast_append_to "races", target: "races" }
-  # after the race updates and sets a winner, broadcast the winner
   after_update_commit :broadcast_winner, if: :saved_change_to_winner_id?
 
   def can_be_started?(user)
@@ -64,6 +65,13 @@ class Race < ApplicationRecord
 
   def in_progress?
     status == "in_progress"
+  end
+
+  def formatted_paragraph_body
+    body.split("").map do |char|
+      displayed_char = char == " " ? "&nbsp;" : char
+      "<span data-race-target='formattedChar'>#{displayed_char}</span>"
+    end.join("")
   end
 
   def broadcast_winner

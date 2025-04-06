@@ -22,7 +22,7 @@ class RacesController < ApplicationController
       @race.participations.create(user: Current.user)
       redirect_to @race
     else
-      # uh oh
+      # handle error, show a flash message
     end
   end
 
