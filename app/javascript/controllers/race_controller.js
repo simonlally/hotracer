@@ -32,7 +32,6 @@ export default class extends Controller {
 
     this.bodyTarget.innerHTML = formattedHtml;
 
-    console.log({ formattedHtml });
     this.charElements = this.bodyTarget.querySelectorAll(".race-char");
   }
 
