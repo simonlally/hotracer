@@ -79,10 +79,14 @@ export default class extends Controller {
       this.completionMessageTarget.classList.remove("hidden");
       this.completionMessageTarget.classList.add("block");
 
-      const csrfToken = document.querySelector(
-        'meta[name="csrf-token"]'
-      ).content;
+      this.submitResults();
+    }
+  }
 
+  submitResults() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    try {
       fetch(`/races/${this.element.dataset.raceId}`, {
         method: "PATCH",
         headers: {
@@ -100,6 +104,8 @@ export default class extends Controller {
         .catch((error) => {
           console.error("Error:", error);
         });
+    } catch (error) {
+      console.error("Error:", error);
     }
   }
 }
