@@ -15,8 +15,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_155607) do
     t.integer "user_id", null: false
     t.integer "race_id", null: false
     t.integer "words_per_minute"
-    t.integer "accuracy"
-    t.integer "placed"
+    t.integer "placement"
     t.datetime "started_at"
     t.datetime "finished_at"
     t.datetime "created_at", null: false
@@ -29,11 +28,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_155607) do
     t.string "slug", null: false
     t.string "status", default: "pending", null: false
     t.text "body", null: false
-    t.integer "duration_in_seconds"
-    t.datetime "started_at"
     t.integer "host_id", null: false
+    t.integer "winner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["host_id"], name: "index_races_on_host_id"
+    t.index ["slug"], name: "index_races_on_slug", unique: true
+    t.index ["winner_id"], name: "index_races_on_winner_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -55,5 +56,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_155607) do
 
   add_foreign_key "participations", "races"
   add_foreign_key "participations", "users"
+  add_foreign_key "races", "users", column: "host_id"
+  add_foreign_key "races", "users", column: "winner_id"
   add_foreign_key "sessions", "users"
 end

@@ -1,52 +1,63 @@
 class RacesController < ApplicationController
   skip_before_action :require_authentication, only: [ :index ]
+  before_action :set_race, only: [ :show, :start, :update ]
+
   def index
     @races = Race.joinable.includes(participations: :user)
   end
 
   def show
-    @race = Race.find(params[:id]) || Race.find_by(slug: params[:slug])
     @participations = @race.participations.includes(:user)
   end
 
   def create
     body = <<~BODY
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.#{' '}
-      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.#{' '}
-      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,#{' '}
-      sunt in culpa qui officia deserunt mollit anim id est laborum.
+      The quick brown fox jumps over the lazy dog.
+      A journey of a thousand miles begins with a single step.
     BODY
 
-    @race = Race.new(slug: SecureRandom.hex(10), body: body, host: Current.user)
+    @race = Race.new(slug: SecureRandom.hex(10), body: body.squish, host: Current.user)
 
     if @race.save!
       @race.participations.create(user: Current.user)
       redirect_to @race
     else
-      # uh oh
+      # handle error, show a flash message
     end
   end
 
   def start
-    @race = Race.find(params[:id]) || Race.find_by(slug: params[:slug])
-
     return unless params[:action] == "start"
-
-    Turbo::StreamsChannel.broadcast_update_to(
-      @race,
-      target: "countdown",
-      html: "<div class='countdown-container text-center'>
-              <p class='text-lg mb-2'>Race starting soon!</p>
-              <div class='countdown-value text-5xl font-bold text-yellow-500'>Get Ready!</div>
-             </div>"
-    )
+    return unless @race.status == "pending"
 
     CountdownJob.perform_later(race_id: @race.id)
-
     head :ok
   end
 
   def update
+    return unless @race.status == "in_progress"
+
+    winning_participation = @race.participations.find_by(user: Current.user)
+    return unless winning_participation
+
+    if @race.winner_id.nil?
+      @race.update!(
+        winner: Current.user,
+        status: "finished"
+      )
+
+      winning_participation.update!(
+        started_at: params[:started_at],
+        finished_at: params[:finished_at],
+      )
+
+      render json: { message: "you won!" }, status: :ok
+    end
+  end
+
+  private
+
+  def set_race
+    @race ||= Race.find(params[:id]) || Race.find_by(slug: params[:slug])
   end
 end

@@ -1,28 +1,57 @@
-<div>
+<div data-controller="race" data-race-id="<%= @race.id %>" data-race-body="<%= @race.body %>">
   <% if authenticated? %>
-    <div id="<%= dom_id(@race)%>">
-      <h1>Welcome to Race <%= @race.slug %></h1>
-      <p>Hosted by: <%= @race.host.email_address %> </p>
-      <h2>Racers in lobby</h2>
-      <%= turbo_stream_from @race %>
-      <div id="participations">
-        <% @participations.each do |participation| %>
-          <%= render partial: "participations/participation", locals: { participation: participation } %>
-        <% end %>
+    <%= turbo_stream_from @race %>
+    <div id="race-info">
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">Race: <span class="text-blue-600"><%= @race.slug %></span></h1>
+      <p class="text-gray-600 mb-6">Hosted by: <span class="font-medium"><%= @race.host.email_address %></span></p>
+      <div class="mb-4">
+        <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-200 pb-2 mb-4">Racers in Lobby</h2>
+        <%= turbo_stream_from @race %>
+        <div id="participations" class="space-y-2">
+          <% @participations.each do |participation| %>
+            <%= render partial: "participations/participation", locals: { participation: participation } %>
+          <% end %>
+        </div>
       </div>
       <% if @race.can_be_started?(Current.user) %>
         <%= button_to "Start", 
-            start_race_path(race_id: @race.id, status: :start),
-            id: "start-race-button",
-            method: :get,
-            data: { turbo: true } %>
+              start_race_path(race_id: @race.id, status: :start),
+              id: "start-race-button",
+              class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded",
+              method: :get,
+              data: { turbo: true, "race-target": "startButton", action: "click->race#hideStartButton" } %>
       <% end %>
     </div>
     <div id="countdown">
     </div>
-    <div id="in-progress" style="display: none;">
-      <h2>The race has begun!</h2>
-      <%# <p id="in-progress-timer">00:00</p> %>
+    <div id="meat-and-potatoes">
+      <div id="timer">
+      </div>
+      <div id="wpm" class="my-16">
+      </div>
+      <div id="race-body" data-race-target="body" class="mb-5 p-4 bg-gray-100 rounded text-lg">
+        <%= @race.formatted_paragraph_body.html_safe %>
+      </div>
+      <div id="typing-area" class="mb-5">
+        <textarea id="race-input"
+                  class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  rows="5"
+                  placeholder="Start typing here when the race begins..."
+                  disabled="<%= @race.status != 'started' %>"
+                  data-race-target="input"
+                  data-action="input->race#handleInput"></textarea>
+      </div>
+      <div id="progress-indicators" class="mb-5">
+        <div class="flex items-center mb-2">
+          <div class="w-full bg-gray-200 rounded-full h-2.5">
+            <div id="user-progress" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+          </div>
+          <span id="user-percentage" class="ml-2">0%</span>
+        </div>
+      </div>
     </div>
-  <% end %> <%# authenticated end %>
+    <div data-race-target="completionMessage" class="hidden mt-4 p-4 bg-green-100 text-green-800 rounded">
+      <p class="font-bold">You won!</p>
+    </div>
+  <% end %>
 </div>
