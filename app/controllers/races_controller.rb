@@ -41,14 +41,15 @@ class RacesController < ApplicationController
     return unless winning_participation
 
     if @race.winner_id.nil?
-      @race.update!(
-        winner: Current.user,
-        status: "finished"
-      )
-
       winning_participation.update!(
         started_at: params[:started_at],
         finished_at: params[:finished_at],
+        words_per_minute: params[:words_per_minute],
+      )
+
+      @race.update!(
+        winner: Current.user,
+        status: "finished"
       )
 
       render json: { message: "you won!" }, status: :ok

@@ -6,6 +6,7 @@ export default class extends Controller {
     "input",
     "completionMessage",
     "formattedChar",
+    "wordsPerMinute",
   ];
 
   connect() {
@@ -69,6 +70,9 @@ export default class extends Controller {
       if (i === inputValue.length) {
         this.formattedCharTargets[i].classList.add("underline");
       }
+
+      // calculate and render the wpm
+      this.renderWordsPerMinute();
     }
 
     // somebody won!
@@ -81,6 +85,33 @@ export default class extends Controller {
 
       this.submitResults();
     }
+  }
+
+  calculateWordsPerMinute() {
+    /* 
+      according to https://www.speedtypingonline.com/typing-equations
+      the formula for calculating wpm is => characters typed / 5 (avg characters per word) / time in minutes
+      for now we'll only calculate wpm and not accuracy
+    */
+
+    // can refactor this to use fewer variables
+    // but this is more readable
+    const currentTime = new Date();
+    const elapsedTime = currentTime - this.startTime;
+    const charactersTyped = this.inputTarget.value.length;
+    const elapsedTimeInMinutes = elapsedTime / 1000 / 60;
+    const wordsPerMinute = Math.round(
+      charactersTyped / 5 / elapsedTimeInMinutes
+    );
+    return wordsPerMinute;
+  }
+
+  renderWordsPerMinute() {
+    this.wordsPerMinute = this.calculateWordsPerMinute();
+
+    this.wordsPerMinuteTarget.innerText =
+      "Words per minute: " + this.wordsPerMinute;
+    this.wordsPerMinuteTarget.classList.remove("hidden");
   }
 
   submitResults() {
@@ -97,6 +128,7 @@ export default class extends Controller {
           completed: true,
           started_at: this.startTime,
           finished_at: this.endtime,
+          words_per_minute: this.wordsPerMinute,
         }),
       })
         .then((response) => response.json())

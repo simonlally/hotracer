@@ -74,12 +74,21 @@ class Race < ApplicationRecord
     end.join("")
   end
 
+  def winning_participation
+    participations
+      .where(user: winner)
+      .first
+  end
+
   def broadcast_winner
     broadcast_replace_to(
       self,
       target: "meat-and-potatoes",
       partial: "races/winner",
-      locals: { winner: winner }
+      locals: {
+        winner: winner,
+        winning_participation: winning_participation
+      }
     )
   end
 end
