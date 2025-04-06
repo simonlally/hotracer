@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = [
     "startButton",
     "input",
-    "body",
     "completionMessage",
     "formattedChar",
   ];
@@ -92,6 +91,8 @@ export default class extends Controller {
         },
         body: JSON.stringify({
           completed: true,
+          started_at: this.startTime,
+          finished_at: this.endtime,
         }),
       })
         .then((response) => response.json())

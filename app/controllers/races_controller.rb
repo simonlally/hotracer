@@ -37,10 +37,18 @@ class RacesController < ApplicationController
   def update
     return unless @race.status == "in_progress"
 
+    winning_participation = @race.participations.find_by(user: Current.user)
+    return unless winning_participation
+
     if @race.winner_id.nil?
       @race.update!(
         winner: Current.user,
         status: "finished"
+      )
+
+      winning_participation.update!(
+        started_at: params[:started_at],
+        finished_at: params[:finished_at],
       )
 
       render json: { message: "you won!" }, status: :ok
