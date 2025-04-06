@@ -70,7 +70,8 @@ class Race < ApplicationRecord
     broadcast_replace_to(
       self,
       target: "meat-and-potatoes",
-
+      partial: "races/winner",
+      locals: { winner: winner }
     )
   end
 end

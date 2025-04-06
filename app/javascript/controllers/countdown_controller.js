@@ -23,8 +23,7 @@ export default class extends Controller {
           this.bodyTarget.style.display = "none";
 
           const countdownFinishedEvent = new CustomEvent("countdown:finished", {
-            bubbles: true, // Important: allows event to bubble up DOM tree
-            detail: { raceId: this.element.dataset.raceId },
+            bubbles: true,
           });
 
           this.element.dispatchEvent(countdownFinishedEvent);

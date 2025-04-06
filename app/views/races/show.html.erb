@@ -1,4 +1,4 @@
-<div data-controller="race">
+<div data-controller="race" data-race-id="<%= @race.id %>">
   <% if authenticated? %>
     <div id="<%= dom_id(@race)%>">
       <h1>Welcome to Race <%= @race.slug %></h1>
@@ -21,18 +21,17 @@
     <div id="countdown">
     </div>
     <div id="meat-and-potatoes">
-      <div id="race-body" class="mb-5 p-4 bg-gray-100 rounded text-lg">
+      <div id="race-body" data-race-target="body" class="mb-5 p-4 bg-gray-100 rounded text-lg">
         <%= @race.body %>
       </div>
       <div id="typing-area" class="mb-5">
-        <textarea id="race-input" 
+        <textarea id="race-input"
                   class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
                   rows="5"
                   placeholder="Start typing here when the race begins..."
                   disabled="<%= @race.status != 'started' %>"
                   data-race-target="input"
-                  data-action="input->typing#checkProgress"
-                  data-typing-body-value="<%= @race.body %>"></textarea>
+                  data-action="input->race#handleInput"></textarea>
       </div>
       <div id="progress-indicators" class="mb-5">
         <div class="flex items-center mb-2">
@@ -43,6 +42,9 @@
           <span id="user-percentage" class="ml-2">0%</span>
         </div>
       </div>
+    </div>
+    <div data-race-target="completionMessage" class="hidden mt-4 p-4 bg-green-100 text-green-800 rounded">
+      <p class="font-bold">Race Complete!</p>
     </div>
   <% end %> <%# authenticated end %>
 </div>
