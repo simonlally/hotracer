@@ -66,7 +66,7 @@ export default class extends Controller {
         );
       }
 
-      // character is the same as last character so this is our current position
+      // when the length of the input is equal to the index the original body that's the current character
       if (i === inputValue.length) {
         this.formattedCharTargets[i].classList.add("underline");
       }
@@ -94,8 +94,6 @@ export default class extends Controller {
       for now we'll only calculate wpm and not accuracy
     */
 
-    // can refactor this to use fewer variables
-    // but this is more readable
     const currentTime = new Date();
     const elapsedTime = currentTime - this.startTime;
     const charactersTyped = this.inputTarget.value.length;

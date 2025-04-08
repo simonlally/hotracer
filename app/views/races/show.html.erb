@@ -7,9 +7,7 @@
         <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-200 pb-2 mb-4">Racers in Lobby</h2>
         <%= turbo_stream_from @race %>
         <div id="participations" class="space-y-2">
-          <% @participations.each do |participation| %>
-            <%= render partial: "participations/participation", locals: { participation: participation } %>
-          <% end %>
+          <%= render @participations %>
         </div>
       </div>
       <% if @race.can_be_started?(Current.user) %>
@@ -28,7 +26,7 @@
     <div id="meat-and-potatoes">
       <div id="timer">
       </div>
-      <div id="race-body" data-race-target="body" class="mb-5 p-4 bg-gray-100 rounded text-lg">
+      <div id="race-body" data-race-target="body" class="mb-5 p-4 bg-gray-100 rounded text-lg break-words">
         <%= @race.formatted_paragraph_body.html_safe %>
       </div>
       <div id="typing-area" class="mb-5">

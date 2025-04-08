@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = ["body"];
 
   connect() {
-    console.log("Countdown started");
     this.startCountdown();
   }
 
@@ -20,15 +19,11 @@ export default class extends Controller {
         this.bodyTarget.textContent = "GO!";
         clearInterval(interval);
 
-        setTimeout(() => {
-          this.bodyTarget.style.display = "none";
+        const countdownFinishedEvent = new CustomEvent("countdown:finished", {
+          bubbles: true,
+        });
 
-          const countdownFinishedEvent = new CustomEvent("countdown:finished", {
-            bubbles: true,
-          });
-
-          this.element.dispatchEvent(countdownFinishedEvent);
-        }, 1000);
+        this.element.dispatchEvent(countdownFinishedEvent);
       }
     }, 1000);
   }
