@@ -38,6 +38,7 @@ class Race < ApplicationRecord
   scope :finished, -> { where(status: :finished) }
 
   after_create_commit :enqueue_new_race_broadcast_job
+  # after_update_commit -> { broadcast_race_completion if status == "finished" }
 
   def can_be_started?(user)
     host_id == user.id && status == "pending"
@@ -51,12 +52,6 @@ class Race < ApplicationRecord
     body.split("").map do |char|
       "<span data-race-target='formattedChar'>#{char}</span>"
     end.join("")
-  end
-
-  def winning_participation
-    participations
-      .where(placement: 1)
-      .first
   end
 
   def pending?
@@ -77,15 +72,7 @@ class Race < ApplicationRecord
     NewRaceBroadcastJob.perform_later(race_id: id)
   end
 
-  def broadcast_winner
-    broadcast_replace_to(
-      self,
-      target: "meat-and-potatoes",
-      partial: "races/winner",
-      locals: {
-        winner: winner,
-        winning_participation: winning_participation
-      }
-    )
+  def broadcast_race_completion
+    # broadcast play again?
   end
 end

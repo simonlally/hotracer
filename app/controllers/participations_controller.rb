@@ -1,6 +1,11 @@
 class ParticipationsController < ApplicationController
   before_action :set_race, only: [ :create ]
 
+  def index
+    @participations =
+      Current.user.participations.finished.includes(:race).order(finished_at: :desc)
+  end
+
   def create
     @participation = @race.participations.find_or_create_by!(user: Current.user)
     redirect_to @race

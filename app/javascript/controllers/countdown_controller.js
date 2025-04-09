@@ -24,6 +24,10 @@ export default class extends Controller {
         });
 
         this.element.dispatchEvent(countdownFinishedEvent);
+
+        setTimeout(() => {
+          this.bodyTarget.textContent = "";
+        }, 1000);
       }
     }, 1000);
   }

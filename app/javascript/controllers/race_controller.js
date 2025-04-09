@@ -46,7 +46,6 @@ export default class extends Controller {
   handleInput(event) {
     const inputValue = event.target.value;
 
-    // start from a clean slate for each keystroke
     this.formattedCharTargets.forEach((el) => {
       el.classList.remove(
         "text-green-600",
@@ -56,13 +55,6 @@ export default class extends Controller {
       );
     });
 
-    /* 
-      loop through the entire input, for each character in the input
-      - if the character is correct, add the green class
-      - if the character is incorrect, add the red class
-      - if the character is the same as the input, add the underline class
-      - if the character is not in the input, do nothing
-    */
     for (let i = 0; i < this.formattedCharTargets.length; i++) {
       if (i >= inputValue.length) return;
 
@@ -75,22 +67,17 @@ export default class extends Controller {
         );
       }
 
-      // when the length of the input is equal to the index the original body that's the current character
+      // current_character is set when the length of the input is equal to the current_index
       if (i === inputValue.length) {
         this.formattedCharTargets[i].classList.add("underline");
       }
 
-      // calculate and render the wpm
       this.renderWordsPerMinute();
     }
 
-    // somebody won!
     if (inputValue === this.unformattedRaceBody) {
       this.endtime = new Date();
-
       this.inputTarget.disabled = true;
-      this.completionMessageTarget.classList.remove("hidden");
-      this.completionMessageTarget.classList.add("block");
 
       this.submitResults();
     }
@@ -118,14 +105,12 @@ export default class extends Controller {
 
     this.wordsPerMinuteTarget.innerText =
       "Words per minute: " + this.wordsPerMinute;
-    this.wordsPerMinuteTarget.classList.remove("hidden");
   }
 
   submitResults() {
     // https://fly.io/ruby-dispatch/turbostream-fetch/
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-    console.log("submitting results");
     try {
       fetch(
         `/participations/${this.element.dataset.raceCurrentParticipationId}`,

@@ -29,6 +29,8 @@ class Participation < ApplicationRecord
   after_create_commit -> { broadcast_participation }
   after_update_commit -> { broadcast_participation if saved_change_to_placement? }
 
+  scope :finished, -> { where.not(finished_at: nil, placement: nil) }
+
   delegate :email_address, to: :user
 
   private

@@ -10,6 +10,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :participations, only: [ :create, :update ]
+  resources :participations, only: [ :index, :create, :update ]
   root "races#index"
 end

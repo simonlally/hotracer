@@ -1,7 +1,7 @@
 <div data-controller="race" data-race-current-participation-id="<%= @current_participation.id %>" data-race-body="<%= @race.body %>" class="w-full flex flex-col justify-center">
   <% if @race.pending? %>
     <div id="race-info" class="mb-4">
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">Race: <span class="text-blue-600"><%= @race.slug %></span></h1>
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">Race: <span class="text-blue-600"><%= @race.id %></span></h1>
       <p class="text-gray-600 mb-6">Hosted by: <span class="font-medium"><%= @race.host.email_address %></span></p>
       <div class="mb-4">
         <h2 class="text-xl font-semibold text-gray-700 border-b border-gray-200 pb-2 mb-4">Racers in Lobby</h2>
@@ -21,11 +21,9 @@
     </div>
     <div id="countdown" class="min-h-12">
     </div>
-    <div id="wpm" data-race-target="wordsPerMinute">
+    <div id="wpm" data-race-target="wordsPerMinute" class="min-h-6">
     </div>
     <div id="meat-and-potatoes">
-      <div id="timer">
-      </div>
       <div id="race-body" data-race-target="body" class="mb-5 p-4 bg-gray-100 rounded text-lg break-words">
         <%= @race.formatted_paragraph_body.html_safe %>
       </div>
@@ -39,9 +37,6 @@
                   data-action="input->race#handleInput"></textarea>
       </div>
     </div>
-    <div data-race-target="completionMessage" class="hidden mt-4 p-4 bg-green-100 text-green-800 rounded">
-      <p class="font-bold">You won!</p>
-    </div>
   </div>
 <% elsif @race.in_progress? %>
   <div class="text-center p-8 bg-gray-50 rounded-lg shadow-sm border border-gray-200 max-w-2xl mx-auto my-8">
@@ -53,21 +48,6 @@
     <%= render partial: "return_to_races" %>
   </div>
 <% else %>
-  <div class="text-center p-8">
-    <svg class="w-16 h-16 text-amber-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-    </svg>
-    <h2 class="text-2xl font-bold text-amber-800">Race Complete!</h2>
-    <div class="bg-white p-6 rounded-lg mb-6">
-      <div>
-        <% @participations.order(:placement).each do |participation| %>
-          <% if participation.placement.present? %>
-            <%= render partial: "participations/participation", locals: { participation: participation } %>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-    <%= render partial: "return_to_races" %>
-  </div>
+  <%= render partial: "race_completion", locals: { race: @race } %>
 <% end %>
 </div>
