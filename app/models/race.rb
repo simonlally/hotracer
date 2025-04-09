@@ -61,6 +61,9 @@ class Race < ApplicationRecord
       .first
   end
 
+  def pending?
+    status == "pending"
+  end
 
   private
 

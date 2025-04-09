@@ -29,8 +29,18 @@ export default class extends Controller {
     this.startTime = new Date();
   }
 
-  hideStartButton() {
-    this.startButtonTarget.style.display = "none";
+  disableStartButton() {
+    this.startButtonTarget.classList.add("disabled");
+    this.startButtonTarget.classList.remove(
+      "bg-green-600",
+      "hover:bg-green-700",
+      "hover:cursor-pointer"
+    );
+    this.startButtonTarget.classList.add(
+      "bg-gray-400",
+      "cursor-not-allowed",
+      "opacity-60"
+    );
   }
 
   handleInput(event) {
