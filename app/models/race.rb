@@ -79,9 +79,4 @@ class Race < ApplicationRecord
       }
     )
   end
-
-
-  def current_user_is_host?
-    host_id == Current.user.id
-  end
 end
