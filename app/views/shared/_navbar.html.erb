@@ -4,14 +4,14 @@
     <div class="hidden sm:flex flex-col sm:flex-row items-center space-x-4 w-full sm:w-auto" id="menu">
       <div class="flex flex-col sm:flex-row sm:space-x-4">
         <% if authenticated? %>
-          <span class="block sm:inline-block">
+          <span class="block">
             <%= button_to 'History', participations_path, method: :get, class: 'hover:text-purple-700 text-white font-bold py-2 px-4 hover:cursor-pointer' %>
           </span>
-          <span class="block sm:inline-block">
+          <span class="block">
             <%= button_to 'Logout', session_path, method: :delete, class: 'hover:text-purple-700 text-white font-bold py-2 px-4 hover:cursor-pointer' %>
           </span>
         <% else %>
-          <span class="block sm:inline-block">
+          <span class="block">
             <%= button_to 'Login', new_session_path, method: :get, class: 'hover:text-purple-700 text-white font-bold py-2 px-4 hover:cursor-pointer' %>
           </span>
         <% end %>

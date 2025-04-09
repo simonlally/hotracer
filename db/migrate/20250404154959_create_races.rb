@@ -5,7 +5,6 @@ class CreateRaces < ActiveRecord::Migration[8.0]
       t.string :status, null: false, default: "pending"
       t.text :body, null: false
       t.references :host, null: false, foreign_key: { to_table: :users }
-      t.references :winner, null: true, foreign_key: { to_table: :users }
 
       t.timestamps
     end
