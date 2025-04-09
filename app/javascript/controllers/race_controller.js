@@ -64,7 +64,6 @@ export default class extends Controller {
       - if the character is not in the input, do nothing
     */
     for (let i = 0; i < this.formattedCharTargets.length; i++) {
-      // there is no input so nothing needs to be done
       if (i >= inputValue.length) return;
 
       if (inputValue[i] === this.unformattedRaceBody[i]) {
@@ -105,9 +104,9 @@ export default class extends Controller {
     */
 
     const currentTime = new Date();
-    const elapsedTime = currentTime - this.startTime;
+    const elapsedTimeInMilliseconds = currentTime - this.startTime;
     const charactersTyped = this.inputTarget.value.length;
-    const elapsedTimeInMinutes = elapsedTime / 1000 / 60;
+    const elapsedTimeInMinutes = elapsedTimeInMilliseconds / 1000 / 60;
     const wordsPerMinute = Math.round(
       charactersTyped / 5 / elapsedTimeInMinutes
     );

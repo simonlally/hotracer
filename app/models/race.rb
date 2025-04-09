@@ -65,6 +65,14 @@ class Race < ApplicationRecord
     status == "pending"
   end
 
+  def in_progress?
+    status == "in_progress"
+  end
+
+  def finished?
+    status == "finished"
+  end
+
   private
 
   def enqueue_new_race_broadcast_job
