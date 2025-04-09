@@ -27,7 +27,6 @@ class RacesController < ApplicationController
   end
 
   def start
-    return unless params[:action] == "start"
     return unless @race.status == "pending"
 
     CountdownJob.perform_later(race_id: @race.id)

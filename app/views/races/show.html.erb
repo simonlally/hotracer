@@ -12,7 +12,7 @@
       </div>
       <% if @race.can_be_started?(Current.user) %>
         <%= button_to "Start", 
-              start_race_path(race_id: @race.id, status: :start),
+              start_race_path(race_id: @race.id),
               id: "start-race-button",
               class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer mb-4",
               method: :get,

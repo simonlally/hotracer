@@ -113,6 +113,7 @@ export default class extends Controller {
   }
 
   submitResults() {
+    // https://fly.io/ruby-dispatch/turbostream-fetch/
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     try {

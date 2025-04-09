@@ -38,9 +38,7 @@ class Race < ApplicationRecord
   scope :in_progress, -> { where(status: :in_progress) }
   scope :finished, -> { where(status: :finished) }
 
-  # turbo infers the model partial _race.html.erb
-  # and passes the current instance as the local variable
-  after_create_commit { broadcast_append_to "races", target: "races" }
+  after_create_commit :enqueue_new_race_broadcast_job
   after_update_commit :broadcast_winner, if: :saved_change_to_winner_id?
 
   def can_be_started?(user)
@@ -51,26 +49,9 @@ class Race < ApplicationRecord
     self.slug = SecureRandom.hex(10)
   end
 
-  def duration_in_minutes
-    duration_in_seconds / 60
-  end
-
-  def started?
-    started_at.present?
-  end
-
-  def finished?
-    finished_at.present?
-  end
-
-  def in_progress?
-    status == "in_progress"
-  end
-
   def formatted_paragraph_body
     body.split("").map do |char|
-      displayed_char = char == " " ? "&nbsp;" : char
-      "<span data-race-target='formattedChar'>#{displayed_char}</span>"
+      "<span data-race-target='formattedChar'>#{char}</span>"
     end.join("")
   end
 
@@ -78,6 +59,13 @@ class Race < ApplicationRecord
     participations
       .where(user: winner)
       .first
+  end
+
+
+  private
+
+  def enqueue_new_race_broadcast_job
+    NewRaceBroadcastJob.perform_later(race_id: id)
   end
 
   def broadcast_winner
@@ -90,5 +78,10 @@ class Race < ApplicationRecord
         winning_participation: winning_participation
       }
     )
+  end
+
+
+  def current_user_is_host?
+    host_id == Current.user.id
   end
 end
