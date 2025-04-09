@@ -24,7 +24,6 @@
 #
 class Race < ApplicationRecord
   belongs_to :host, class_name: "User", foreign_key: "host_id"
-  belongs_to :winner, class_name: "User", foreign_key: "winner_id", optional: true
 
   has_many :participations, dependent: :destroy
   has_many :users, through: :participations
@@ -39,7 +38,6 @@ class Race < ApplicationRecord
   scope :finished, -> { where(status: :finished) }
 
   after_create_commit :enqueue_new_race_broadcast_job
-  after_update_commit :broadcast_winner, if: :saved_change_to_winner_id?
 
   def can_be_started?(user)
     host_id == user.id && status == "pending"
@@ -57,7 +55,7 @@ class Race < ApplicationRecord
 
   def winning_participation
     participations
-      .where(user: winner)
+      .where(placement: 1)
       .first
   end
 

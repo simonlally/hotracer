@@ -1,4 +1,4 @@
-<div data-controller="race" data-race-id="<%= @race.id %>" data-race-body="<%= @race.body %>" class="w-full flex flex-col justify-center">
+<div data-controller="race" data-race-current-participation-id="<%= @current_participation.id %>" data-race-body="<%= @race.body %>" class="w-full flex flex-col justify-center">
   <% if @race.pending? %>
     <div id="race-info" class="mb-4">
       <h1 class="text-3xl font-bold text-gray-800 mb-4">Race: <span class="text-blue-600"><%= @race.slug %></span></h1>
@@ -39,9 +39,9 @@
                   data-action="input->race#handleInput"></textarea>
       </div>
     </div>
-  </div>
-  <div data-race-target="completionMessage" class="hidden mt-4 p-4 bg-green-100 text-green-800 rounded">
-    <p class="font-bold">You won!</p>
+    <div data-race-target="completionMessage" class="hidden mt-4 p-4 bg-green-100 text-green-800 rounded">
+      <p class="font-bold">You won!</p>
+    </div>
   </div>
 <% elsif @race.in_progress? %>
   <div class="text-center p-8 bg-gray-50 rounded-lg shadow-sm border border-gray-200 max-w-2xl mx-auto my-8">
@@ -53,20 +53,18 @@
     <%= render partial: "return_to_races" %>
   </div>
 <% else %>
-  <div class="text-center p-8 bg-gradient-to-b from-amber-50 to-amber-100 rounded-lg shadow-sm border border-amber-200 max-w-2xl mx-auto my-8">
-    <div class="mb-6">
-      <svg class="w-16 h-16 text-amber-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-      </svg>
-      <h2 class="text-2xl font-bold text-amber-800">Race Complete!</h2>
-    </div>
-    <div class="bg-white p-6 rounded-lg shadow-inner mb-6">
-      <p class="text-xl font-semibold text-gray-800 mb-2">Winner: <span class="text-amber-600"><%= @race.winning_participation.user.email_address %></span></p>
-      <div class="flex items-center justify-center">
-        <svg class="w-5 h-5 text-amber-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        <p class="text-2xl font-bold text-amber-600"><%= @race.winning_participation.words_per_minute %> <span class="text-sm font-normal text-gray-600">WPM</span></p>
+  <div class="text-center p-8">
+    <svg class="w-16 h-16 text-amber-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+    </svg>
+    <h2 class="text-2xl font-bold text-amber-800">Race Complete!</h2>
+    <div class="bg-white p-6 rounded-lg mb-6">
+      <div>
+        <% @participations.order(:placement).each do |participation| %>
+          <% if participation.placement.present? %>
+            <%= render partial: "participations/participation", locals: { participation: participation } %>
+          <% end %>
+        <% end %>
       </div>
     </div>
     <%= render partial: "return_to_races" %>

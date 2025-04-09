@@ -125,20 +125,24 @@ export default class extends Controller {
     // https://fly.io/ruby-dispatch/turbostream-fetch/
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
+    console.log("submitting results");
     try {
-      fetch(`/races/${this.element.dataset.raceId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken,
-        },
-        body: JSON.stringify({
-          completed: true,
-          started_at: this.startTime,
-          finished_at: this.endtime,
-          words_per_minute: this.wordsPerMinute,
-        }),
-      })
+      fetch(
+        `/participations/${this.element.dataset.raceCurrentParticipationId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken,
+          },
+          body: JSON.stringify({
+            completed: true,
+            started_at: this.startTime,
+            finished_at: this.endtime,
+            words_per_minute: this.wordsPerMinute,
+          }),
+        }
+      )
         .then((response) => response.json())
         .then((data) => console.log({ data }))
         .catch((error) => {

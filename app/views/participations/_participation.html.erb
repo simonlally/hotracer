@@ -1,3 +1,27 @@
-<div id="<%= dom_id(participation) %>" class="flex flex-col">
-  <h3><%= participation.user.email_address %></h3>
+<div id="<%= dom_id(participation) %>" class="flex justify-between items-center p-2 mb-1 bg-white rounded-md shadow-sm border border-gray-100">
+  <h3 class="font-medium text-gray-700"><%= participation.user.email_address %></h3>
+  <% if participation.placement.present? %>
+    <div class="flex items-center">
+      <% if participation.placement == 1 %>
+        <span class="text-sm font-semibold px-2.5 py-0.5 rounded bg-amber-100 text-amber-800">
+          🥇 1st
+        </span>
+      <% elsif participation.placement == 2 %>
+        <span class="text-sm font-semibold px-2.5 py-0.5 rounded bg-slate-100 text-slate-800">
+          🥈 2nd
+        </span>
+      <% elsif participation.placement == 3 %>
+        <span class="text-sm font-semibold px-2.5 py-0.5 rounded bg-orange-100 text-orange-800">
+          🥉 3rd
+        </span>
+      <% else %>
+        <span class="text-sm font-semibold px-2.5 py-0.5 rounded bg-gray-100 text-gray-800">
+          <%= participation.placement %>th
+        </span>
+      <% end %>
+      <% if participation.words_per_minute.present? %>
+        <span class="ml-2 text-sm text-gray-500"><%= participation.words_per_minute %> WPM</span>
+      <% end %>
+    </div>
+  <% end %>
 </div>

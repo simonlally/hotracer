@@ -26,14 +26,19 @@ class Participation < ApplicationRecord
   belongs_to :user
   belongs_to :race
 
-  after_create_commit -> {
+  after_create_commit -> { broadcast_participation }
+  after_update_commit -> { broadcast_participation if saved_change_to_placement? }
+
+  delegate :email_address, to: :user
+
+  private
+
+  def broadcast_participation
     broadcast_append_to(
       race,
       target: "participations",
       partial: "participations/participation",
       locals: { participation: self }
     )
-  }
-
-  delegate :email_address, to: :user
+  end
 end
