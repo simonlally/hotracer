@@ -9,18 +9,15 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  host_id    :integer          not null
-#  winner_id  :integer
 #
 # Indexes
 #
-#  index_races_on_host_id    (host_id)
-#  index_races_on_slug       (slug) UNIQUE
-#  index_races_on_winner_id  (winner_id)
+#  index_races_on_host_id  (host_id)
+#  index_races_on_slug     (slug) UNIQUE
 #
 # Foreign Keys
 #
-#  host_id    (host_id => users.id)
-#  winner_id  (winner_id => users.id)
+#  host_id  (host_id => users.id)
 #
 require 'rails_helper'
 

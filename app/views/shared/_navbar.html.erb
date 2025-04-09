@@ -1,0 +1,21 @@
+<nav id="nav" class="bg-gray-800 p-5 w-screen max-w-full">
+  <div class="container mx-auto flex flex-wrap justify-between items-center ">
+    <%= link_to 'HotRacer', root_path, class: 'text-white font-bold hover:text-purple-700' %>
+    <div class="hidden sm:flex flex-col sm:flex-row items-center space-x-4 w-full sm:w-auto" id="menu">
+      <div class="flex flex-col sm:flex-row sm:space-x-4">
+        <% if authenticated? %>
+          <span class="block">
+            <%= button_to 'History', participations_path, method: :get, class: 'hover:text-purple-700 text-white font-bold py-2 px-4 hover:cursor-pointer' %>
+          </span>
+          <span class="block">
+            <%= button_to 'Logout', session_path, method: :delete, class: 'hover:text-purple-700 text-white font-bold py-2 px-4 hover:cursor-pointer' %>
+          </span>
+        <% else %>
+          <span class="block">
+            <%= button_to 'Login', new_session_path, method: :get, class: 'hover:text-purple-700 text-white font-bold py-2 px-4 hover:cursor-pointer' %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</nav>

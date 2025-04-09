@@ -1,6 +1,6 @@
 class RacesController < ApplicationController
   skip_before_action :require_authentication, only: [ :index ]
-  before_action :set_race, only: [ :show, :start, :update ]
+  before_action :set_race, only: [ :show, :start ]
 
   def index
     @races = Race.joinable.includes(participations: :user)
@@ -8,6 +8,7 @@ class RacesController < ApplicationController
 
   def show
     @participations = @race.participations.includes(:user)
+    @current_participation = @race.participations.find_by(user: Current.user)
   end
 
   def create
@@ -17,43 +18,21 @@ class RacesController < ApplicationController
     BODY
 
     @race = Race.new(slug: SecureRandom.hex(10), body: body.squish, host: Current.user)
+    participation = @race.participations.build(user: Current.user)
 
-    if @race.save!
-      @race.participations.create(user: Current.user)
-      redirect_to @race
-    else
-      # handle error, show a flash message
+    begin
+      redirect_to @race if @race.save! && participation.save!
+    rescue ActiveRecord::RecordInvalid => e
+      # log the error somewhere
+      redirect_to :index, notice: "Something went wrong creating a new race, try again!"
     end
   end
 
   def start
-    return unless params[:action] == "start"
     return unless @race.status == "pending"
 
     CountdownJob.perform_later(race_id: @race.id)
     head :ok
-  end
-
-  def update
-    return unless @race.status == "in_progress"
-
-    winning_participation = @race.participations.find_by(user: Current.user)
-    return unless winning_participation
-
-    if @race.winner_id.nil?
-      winning_participation.update!(
-        started_at: params[:started_at],
-        finished_at: params[:finished_at],
-        words_per_minute: params[:words_per_minute],
-      )
-
-      @race.update!(
-        winner: Current.user,
-        status: "finished"
-      )
-
-      render json: { message: "you won!" }, status: :ok
-    end
   end
 
   private

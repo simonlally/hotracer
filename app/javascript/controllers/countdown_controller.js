@@ -19,14 +19,14 @@ export default class extends Controller {
         this.bodyTarget.textContent = "GO!";
         clearInterval(interval);
 
+        const countdownFinishedEvent = new CustomEvent("countdown:finished", {
+          bubbles: true,
+        });
+
+        this.element.dispatchEvent(countdownFinishedEvent);
+
         setTimeout(() => {
-          this.bodyTarget.style.display = "none";
-
-          const countdownFinishedEvent = new CustomEvent("countdown:finished", {
-            bubbles: true,
-          });
-
-          this.element.dispatchEvent(countdownFinishedEvent);
+          this.bodyTarget.textContent = "";
         }, 1000);
       }
     }, 1000);

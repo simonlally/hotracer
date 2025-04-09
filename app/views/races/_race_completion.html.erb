@@ -1,0 +1,16 @@
+<div class="text-center p-8">
+  <svg class="w-16 h-16 text-amber-500 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+  </svg>
+  <h2 class="text-2xl font-bold text-amber-800">Race <%= race.id %> Complete!</h2>
+  <div class="bg-white p-6 rounded-lg mb-6">
+    <div>
+      <% race.participations.order(:placement).each do |participation| %>
+        <% if participation.placement.present? %>
+          <%= render partial: "participations/participation", locals: { participation: participation } %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <%= render partial: "return_to_races" %>
+</div>

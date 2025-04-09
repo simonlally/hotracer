@@ -6,10 +6,10 @@ Rails.application.routes.draw do
 
   resources :races, only: [ :index, :new, :create, :show, :update ] do
     member do
-      get :start
+      post :start
     end
   end
 
-  resources :participations
+  resources :participations, only: [ :index, :create, :update ]
   root "races#index"
 end

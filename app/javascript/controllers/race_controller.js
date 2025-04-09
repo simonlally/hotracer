@@ -29,14 +29,23 @@ export default class extends Controller {
     this.startTime = new Date();
   }
 
-  hideStartButton() {
-    this.startButtonTarget.style.display = "none";
+  disableStartButton() {
+    this.startButtonTarget.classList.add("disabled");
+    this.startButtonTarget.classList.remove(
+      "bg-green-600",
+      "hover:bg-green-700",
+      "hover:cursor-pointer"
+    );
+    this.startButtonTarget.classList.add(
+      "bg-gray-400",
+      "cursor-not-allowed",
+      "opacity-60"
+    );
   }
 
   handleInput(event) {
     const inputValue = event.target.value;
 
-    // start from a clean slate for each keystroke
     this.formattedCharTargets.forEach((el) => {
       el.classList.remove(
         "text-green-600",
@@ -46,15 +55,7 @@ export default class extends Controller {
       );
     });
 
-    /* 
-      loop through the entire input, for each character in the input
-      - if the character is correct, add the green class
-      - if the character is incorrect, add the red class
-      - if the character is the same as the input, add the underline class
-      - if the character is not in the input, do nothing
-    */
     for (let i = 0; i < this.formattedCharTargets.length; i++) {
-      // there is no input so nothing needs to be done
       if (i >= inputValue.length) return;
 
       if (inputValue[i] === this.unformattedRaceBody[i]) {
@@ -66,22 +67,17 @@ export default class extends Controller {
         );
       }
 
-      // character is the same as last character so this is our current position
+      // current_character is set when the length of the input is equal to the current_index
       if (i === inputValue.length) {
         this.formattedCharTargets[i].classList.add("underline");
       }
 
-      // calculate and render the wpm
       this.renderWordsPerMinute();
     }
 
-    // somebody won!
     if (inputValue === this.unformattedRaceBody) {
       this.endtime = new Date();
-
       this.inputTarget.disabled = true;
-      this.completionMessageTarget.classList.remove("hidden");
-      this.completionMessageTarget.classList.add("block");
 
       this.submitResults();
     }
@@ -94,12 +90,10 @@ export default class extends Controller {
       for now we'll only calculate wpm and not accuracy
     */
 
-    // can refactor this to use fewer variables
-    // but this is more readable
     const currentTime = new Date();
-    const elapsedTime = currentTime - this.startTime;
+    const elapsedTimeInMilliseconds = currentTime - this.startTime;
     const charactersTyped = this.inputTarget.value.length;
-    const elapsedTimeInMinutes = elapsedTime / 1000 / 60;
+    const elapsedTimeInMinutes = elapsedTimeInMilliseconds / 1000 / 60;
     const wordsPerMinute = Math.round(
       charactersTyped / 5 / elapsedTimeInMinutes
     );
@@ -111,26 +105,29 @@ export default class extends Controller {
 
     this.wordsPerMinuteTarget.innerText =
       "Words per minute: " + this.wordsPerMinute;
-    this.wordsPerMinuteTarget.classList.remove("hidden");
   }
 
   submitResults() {
+    // https://fly.io/ruby-dispatch/turbostream-fetch/
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     try {
-      fetch(`/races/${this.element.dataset.raceId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken,
-        },
-        body: JSON.stringify({
-          completed: true,
-          started_at: this.startTime,
-          finished_at: this.endtime,
-          words_per_minute: this.wordsPerMinute,
-        }),
-      })
+      fetch(
+        `/participations/${this.element.dataset.raceCurrentParticipationId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken,
+          },
+          body: JSON.stringify({
+            completed: true,
+            started_at: this.startTime,
+            finished_at: this.endtime,
+            words_per_minute: this.wordsPerMinute,
+          }),
+        }
+      )
         .then((response) => response.json())
         .then((data) => console.log({ data }))
         .catch((error) => {
