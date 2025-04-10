@@ -24,6 +24,11 @@
 #
 FactoryBot.define do
   factory :participation do
-    
+    association :user
+    association :race
+    started_at { nil }
+    finished_at { nil }
+    words_per_minute { nil }
+    placement { nil }
   end
 end

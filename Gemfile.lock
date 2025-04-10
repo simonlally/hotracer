@@ -310,6 +310,8 @@ GEM
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
+    shoulda-matchers (6.4.0)
+      activesupport (>= 5.2.0)
     solargraph (0.53.4)
       backport (~> 1.2)
       benchmark
@@ -429,6 +431,7 @@ DEPENDENCIES
   rails (~> 8.0.1)
   rspec-rails
   rubocop-rails-omakase
+  shoulda-matchers
   solargraph
   solid_cable
   solid_cache

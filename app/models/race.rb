@@ -25,17 +25,20 @@ class Race < ApplicationRecord
   has_many :participations, dependent: :destroy
   has_many :users, through: :participations
 
-  VALID_STATUSES = %w[pending countdown in_progress finished].freeze
+  VALID_STATUSES = %w[pending in_progress finished].freeze
 
   validates :slug, presence: true, uniqueness: true
   validates :status, presence: true, inclusion: { in: VALID_STATUSES }
+  validates :body, presence: true
+
+  validates_associated :host
 
   scope :joinable, -> { where(status: :pending) }
   scope :in_progress, -> { where(status: :in_progress) }
   scope :finished, -> { where(status: :finished) }
 
   after_create_commit :enqueue_new_race_broadcast_job
-  # after_update_commit -> { broadcast_race_completion if status == "finished" }
+  after_update_commit -> { broadcast_remove_race if status == "in_progress" }
 
   def can_be_started?(user)
     host_id == user.id && status == "pending"
@@ -69,7 +72,10 @@ class Race < ApplicationRecord
     NewRaceBroadcastJob.perform_later(race_id: id)
   end
 
-  def broadcast_race_completion
-    # broadcast play again?
+  def broadcast_remove_race
+    broadcast_remove_to(
+      "races",
+      target: self
+    )
   end
 end

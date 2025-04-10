@@ -21,6 +21,9 @@
 #
 FactoryBot.define do
   factory :race do
-    
+    body { "The quick brown fox jumps over the lazy dog." }
+    slug { SecureRandom.hex(10) }
+    status { "pending" }
+    association :host, factory: :user
   end
 end

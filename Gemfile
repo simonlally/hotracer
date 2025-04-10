@@ -62,3 +62,7 @@ group :development do
   gem "annotaterb"
   gem "solargraph"
 end
+
+group :test do
+  gem "shoulda-matchers"
+end
