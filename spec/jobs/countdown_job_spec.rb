@@ -8,6 +8,10 @@ RSpec.describe CountdownJob, type: :job do
       }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
+    it "the queue is set to 'default'" do
+      expect(described_class.queue_name).to eq("default")
+    end
+
     context "when the race is pending" do
       it "updates the race status to 'in_progress'" do
         race = create(:race, status: "pending")

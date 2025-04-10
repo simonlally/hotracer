@@ -12,6 +12,9 @@
           </span>
         <% else %>
           <span class="block">
+            <%= link_to "Sign up", new_registration_path, class: "hover:text-purple-700 text-white font-bold py-2 px-4 hover:cursor-pointer" %>
+          </span>
+          <span class="block">
             <%= link_to "Login", new_session_path, class: "hover:text-purple-700 text-white font-bold py-2 px-4 hover:cursor-pointer" %>
           </span>
         <% end %>

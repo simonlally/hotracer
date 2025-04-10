@@ -56,7 +56,9 @@ export default class extends Controller {
     });
 
     for (let i = 0; i < this.formattedCharTargets.length; i++) {
-      if (i >= inputValue.length) return;
+      if (i >= inputValue.length) {
+        return this.formattedCharTargets[i].classList.add("underline");
+      }
 
       if (inputValue[i] === this.unformattedRaceBody[i]) {
         this.formattedCharTargets[i].classList.add("text-green-600");
@@ -67,7 +69,6 @@ export default class extends Controller {
         );
       }
 
-      // current_character is set when the length of the input is equal to the current_index
       if (i === inputValue.length) {
         this.formattedCharTargets[i].classList.add("underline");
       }

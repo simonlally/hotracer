@@ -1,5 +1,5 @@
 class RacesController < ApplicationController
-  skip_before_action :require_authentication, only: [ :index ]
+  allow_unauthenticated_access only: [ :index ]
   before_action :set_race, only: [ :show, :start ]
 
   def index
