@@ -35,7 +35,7 @@ class Race < ApplicationRecord
   scope :finished, -> { where(status: :finished) }
 
   after_create_commit :enqueue_new_race_broadcast_job
-  # after_update_commit -> { broadcast_race_completion if status == "finished" }
+  after_update_commit -> { broadcast_remove_race if status == "in_progress" }
 
   def can_be_started?(user)
     host_id == user.id && status == "pending"
@@ -69,7 +69,10 @@ class Race < ApplicationRecord
     NewRaceBroadcastJob.perform_later(race_id: id)
   end
 
-  def broadcast_race_completion
-    # broadcast play again?
+  def broadcast_remove_race
+    broadcast_remove_to(
+      "races",
+      target: self
+    )
   end
 end
