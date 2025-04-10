@@ -2,6 +2,12 @@ require "rails_helper"
 
 RSpec.describe CountdownJob, type: :job do
   describe "#perform" do
+    it "raises an exception if the race cannot be found" do
+      expect {
+        described_class.perform_now(race_id: 35)
+      }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
     context "when the race is pending" do
       it "updates the race status to 'in_progress'" do
         race = create(:race, status: "pending")
