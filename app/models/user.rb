@@ -19,6 +19,8 @@ class User < ApplicationRecord
   has_many :hosted_races, class_name: "Race", foreign_key: "host_id", dependent: :destroy
   has_many :races, through: :participations
 
+  validates :email_address, presence: true, uniqueness: { case_sensitive: false }
+  validates :password_digest, presence: true
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 end

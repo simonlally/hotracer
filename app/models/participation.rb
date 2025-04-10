@@ -26,6 +26,9 @@ class Participation < ApplicationRecord
   belongs_to :user
   belongs_to :race
 
+  validates_associated :user
+  validates_associated :race
+
   after_create_commit -> { broadcast_participation }
   after_update_commit -> { broadcast_participation if saved_change_to_placement? }
 
