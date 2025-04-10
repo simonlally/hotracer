@@ -1,24 +1,38 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Dependencies
 
-Things you may want to cover:
+- Ruby 3.4.1
+- Rails 8.0.2
 
-* Ruby version
+## Setup
 
-* System dependencies
+Install gems
 
-* Configuration
+```
+bundle install
+```
 
-* Database creation
+Create database
 
-* Database initialization
+```
+bin/rails db:create
+```
 
-* How to run the test suite
+Run migrations
 
-* Services (job queues, cache servers, search engines, etc.)
+```
+bin/rails db:migrate
+```
 
-* Deployment instructions
+Seed the database
 
-* ...
+```
+bin/rails db:seed
+```
+
+Run the server
+
+```
+bin/dev
+```
